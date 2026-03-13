@@ -7,6 +7,8 @@ export interface CopilotTokenResponse {
 }
 
 export const AuthService = {
+  refreshTimer: null as ReturnType<typeof setTimeout> | null,
+
   getGithubToken(): string | null {
     return localStorage.getItem('github_token');
   },
@@ -53,6 +55,35 @@ export const AuthService = {
     }));
     
     return data;
+  },
+
+  async startTokenRefreshLoop(githubToken: string) {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+    }
+
+    const runRefresh = async () => {
+      try {
+        const tokenData = await this.fetchCopilotToken(githubToken);
+        const refreshIn = tokenData.refresh_in || 1500;
+        const sleepSeconds = Math.max(refreshIn - 60, 30);
+        console.log(`🔄 Next Copilot token refresh in ${sleepSeconds}s`);
+        this.refreshTimer = setTimeout(runRefresh, sleepSeconds * 1000);
+      } catch (error) {
+        console.error('❌ Token refresh failed:', error);
+        // Retry in 30 seconds on failure
+        this.refreshTimer = setTimeout(runRefresh, 30 * 1000);
+      }
+    };
+
+    await runRefresh();
+  },
+
+  stopTokenRefreshLoop() {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   },
 
   async getDeviceCode() {

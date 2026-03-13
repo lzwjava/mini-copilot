@@ -50,22 +50,23 @@ async function pollForAccessToken(deviceCode, interval = 5) {
     }
 }
 
-async function main() {
-    try {
-        const deviceData = await getDeviceCode();
-        const githubToken = await pollForAccessToken(deviceData.device_code, deviceData.interval);
+	async function main() {
+		try {
+			const deviceData = await getDeviceCode();
+			const githubToken = await pollForAccessToken(deviceData.device_code, deviceData.interval);
 
-        const config = {
-            github_token: githubToken
-        };
+			const config = {
+				github_token: githubToken,
+				created_at: new Date().toISOString()
+			};
 
-        fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
-        console.log(`\n✅ Saved GitHub token to ${CONFIG_PATH}`);
-        console.log("🚀 Now you can run 'npm run dev' and the web app will use this token.");
-    } catch (error) {
-        console.error("\n❌ Error:", error.message);
-        process.exit(1);
-    }
-}
+			fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+			console.log(`\n✅ Saved GitHub token to ${CONFIG_PATH}`);
+			console.log("🚀 Now you can run 'npm run dev' and the web app will use this token.");
+		} catch (error) {
+			console.error("\n❌ Error:", error.message);
+			process.exit(1);
+		}
+	}
 
 main();
