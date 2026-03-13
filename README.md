@@ -1,6 +1,6 @@
 # mini-copilot
 
-An interactive terminal REPL for chatting with GitHub Copilot, built with Node.js.
+An interactive terminal REPL for chatting with GitHub Copilot, built with Python.
 
 ## Features
 
@@ -13,24 +13,24 @@ An interactive terminal REPL for chatting with GitHub Copilot, built with Node.j
 
 1. Install dependencies:
    ```bash
-   npm install
+   pip install -r requirements.txt
    ```
 
 2. Authenticate with GitHub:
    ```bash
-   npm run login
+   python scripts/login.py
    ```
    This runs the GitHub device authorization flow and saves your token to `public/config.json`.
 
 3. Start the REPL:
    ```bash
-   npm start
+   python src/mini_copilot.py
    ```
 
 ## Usage
 
 ```
-> What is a closure in JavaScript?
+> What is a closure in Python?
 
 GitHub Copilot: A closure is ...
 
@@ -41,21 +41,17 @@ GitHub Copilot: Sure! Here's an example ...
 
 Type `.exit` or press `Ctrl+C` to quit.
 
-## Available Scripts
-
-- `npm start` - Start mini-copilot
-- `npm run login` - Authenticate with GitHub via device flow
-- `npm run lint` - Run ESLint
-
 ## Project Structure
 
 ```
 scripts/
-└── login.js            # CLI login utility
+└── login.py            # CLI login utility
 
 src/
-└── mini-copilot.js     # Interactive REPL
+└── mini_copilot.py     # Interactive REPL
 
 public/
 └── config.json         # Generated token store (gitignored)
+
+requirements.txt        # Python dependencies
 ```
