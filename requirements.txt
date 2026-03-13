@@ -1,1 +1,3 @@
+# Dependencies are declared in pyproject.toml.
+# To install for development: pip install -e .
 requests>=2.32.0
