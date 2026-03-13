@@ -89,7 +89,7 @@ def main():
     else:
         print("No token found. Type /login to authenticate.\n")
 
-    messages = [{"role": "system", "content": "Be concise. Reply briefly."}]
+    messages = []
 
     print(
         "GitHub Copilot CLI ready. Type your message, /login to authenticate, or .exit to quit.\n"
