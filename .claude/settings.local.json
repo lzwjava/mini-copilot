@@ -67,7 +67,8 @@
       "Bash(diskutil:*)",
       "Bash(mount:*)",
       "Bash(nmcli:*)",
-      "Bash(ruff check:*)"
+      "Bash(ruff check:*)",
+      "WebFetch(domain:github.blog)"
     ],
     "deny": [],
     "ask": [

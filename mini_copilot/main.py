@@ -18,7 +18,7 @@ try:
 except ImportError:
     pass
 
-from mini_copilot.github_api import chat, get_copilot_token
+from mini_copilot.github_api import chat, get_copilot_token, get_models
 
 COMMANDS_HELP = [
     ("/login", "Authenticate with GitHub"),
@@ -28,14 +28,6 @@ COMMANDS_HELP = [
     (".exit", "Quit"),
 ]
 
-AVAILABLE_MODELS = [
-    "gpt-4o",
-    "gpt-4",
-    "gpt-3.5-turbo",
-    "o1-preview",
-    "o1-mini",
-    "claude-3.5-sonnet",
-]
 
 CONFIG_PATH = Path.home() / ".config" / "mini-copilot" / "config.json"
 TOKEN_REFRESH_INTERVAL = 24 * 60  # seconds (~24 minutes)
@@ -129,24 +121,41 @@ def main():
                 print("Nothing to copy yet.\n")
             continue
         if user_input == "/model":
+            try:
+                model_data = get_models(copilot_token)
+            except Exception as e:
+                print(f"Error fetching models: {e}\n", file=sys.stderr)
+                continue
+            # Group by owned_by
+            groups = {}
+            for m in model_data:
+                owner = m.get("owned_by", "unknown")
+                groups.setdefault(owner, []).append(m["id"])
+            flat_models = [m["id"] for m in model_data]
             print(f"\nCurrent model: {current_model}")
             print("Available models:")
-            for i, m in enumerate(AVAILABLE_MODELS):
-                marker = "*" if m == current_model else " "
-                print(f"  {marker} {i + 1}. {m}")
+            idx = 1
+            model_index = {}
+            for owner, ids in groups.items():
+                print(f"  [{owner}]")
+                for mid in ids:
+                    marker = "*" if mid == current_model else " "
+                    print(f"  {marker} {idx}. {mid}")
+                    model_index[idx] = mid
+                    idx += 1
             try:
                 choice = input(
                     "Select model (number or name, Enter to keep current): "
                 ).strip()
                 if choice:
                     if choice.isdigit():
-                        idx = int(choice) - 1
-                        if 0 <= idx < len(AVAILABLE_MODELS):
-                            current_model = AVAILABLE_MODELS[idx]
+                        n = int(choice)
+                        if n in model_index:
+                            current_model = model_index[n]
                             print(f"Model set to: {current_model}\n")
                         else:
                             print("Invalid selection.\n")
-                    elif choice in AVAILABLE_MODELS:
+                    elif choice in flat_models:
                         current_model = choice
                         print(f"Model set to: {current_model}\n")
                     else:
