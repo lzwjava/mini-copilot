@@ -1,4 +1,4 @@
-const GITHUB_CLIENT_ID = '01ab8ac9400c4e429b23'; // VSCode's client ID
+const GITHUB_CLIENT_ID = "01ab8ac9400c4e429b23"; // VSCode's client ID
 
 export interface CopilotTokenResponse {
   token: string;
@@ -10,21 +10,21 @@ export const AuthService = {
   refreshTimer: null as ReturnType<typeof setTimeout> | null,
 
   getGithubToken(): string | null {
-    return localStorage.getItem('github_token');
+    return localStorage.getItem("github_token");
   },
 
   setGithubToken(token: string) {
-    localStorage.setItem('github_token', token);
+    localStorage.setItem("github_token", token);
   },
 
   getCopilotToken(): string | null {
-    const tokenData = localStorage.getItem('copilot_token');
+    const tokenData = localStorage.getItem("copilot_token");
     if (!tokenData) return null;
-    
+
     const { token, expires_at } = JSON.parse(tokenData);
     // Add 1 minute buffer (60 seconds) as per instructions Step 3
-    if (Date.now() / 1000 > (expires_at - 60)) {
-      localStorage.removeItem('copilot_token');
+    if (Date.now() / 1000 > expires_at - 60) {
+      localStorage.removeItem("copilot_token");
       return null;
     }
     return token;
@@ -32,28 +32,36 @@ export const AuthService = {
 
   async fetchCopilotToken(githubToken: string): Promise<CopilotTokenResponse> {
     const headers = {
-      'Authorization': `token ${githubToken}`,
-      'Accept': 'application/json',
-      'editor-version': 'vscode/1.85.1',
-      'editor-plugin-version': 'copilot/1.155.0',
-      'user-agent': 'GithubCopilot/1.155.0',
-      'Copilot-Integration-Id': 'vscode-chat',
+      Authorization: `Bearer ${githubToken}`,
+      Accept: "application/json",
+      "editor-version": "vscode/1.85.1",
+      "editor-plugin-version": "copilot/1.155.0",
+      "user-agent": "GithubCopilot/1.155.0",
+      "Copilot-Integration-Id": "vscode-chat",
     };
 
-    const response = await fetch('https://api.github.com/copilot_internal/v2/token', {
-      headers,
-    });
+    const response = await fetch(
+      "https://api.github.com/copilot_internal/v2/token",
+      {
+        headers,
+      },
+    );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch Copilot token. Make sure you have Copilot access.');
+      throw new Error(
+        "Failed to fetch Copilot token. Make sure you have Copilot access.",
+      );
     }
 
     const data = await response.json();
-    localStorage.setItem('copilot_token', JSON.stringify({
-      token: data.token,
-      expires_at: data.expires_at,
-    }));
-    
+    localStorage.setItem(
+      "copilot_token",
+      JSON.stringify({
+        token: data.token,
+        expires_at: data.expires_at,
+      }),
+    );
+
     return data;
   },
 
@@ -70,7 +78,7 @@ export const AuthService = {
         console.log(`🔄 Next Copilot token refresh in ${sleepSeconds}s`);
         this.refreshTimer = setTimeout(runRefresh, sleepSeconds * 1000);
       } catch (error) {
-        console.error('❌ Token refresh failed:', error);
+        console.error("❌ Token refresh failed:", error);
         // Retry in 30 seconds on failure
         this.refreshTimer = setTimeout(runRefresh, 30 * 1000);
       }
@@ -87,38 +95,41 @@ export const AuthService = {
   },
 
   async getDeviceCode() {
-    const response = await fetch('https://github.com/login/device/code', {
-      method: 'POST',
+    const response = await fetch("https://github.com/login/device/code", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify({
         client_id: GITHUB_CLIENT_ID,
-        scope: 'read:user',
+        scope: "read:user",
       }),
     });
 
-    if (!response.ok) throw new Error('Failed to get device code');
+    if (!response.ok) throw new Error("Failed to get device code");
     return await response.json();
   },
 
   async pollForToken(deviceCode: string): Promise<string> {
     const interval = 5000; // Poll every 5 seconds
-    
+
     while (true) {
-      const response = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+      const response = await fetch(
+        "https://github.com/login/oauth/access_token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            client_id: GITHUB_CLIENT_ID,
+            device_code: deviceCode,
+            grant_type: "urn:ietf:params:oauth:grant-type:device_code",
+          }),
         },
-        body: JSON.stringify({
-          client_id: GITHUB_CLIENT_ID,
-          device_code: deviceCode,
-          grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -126,12 +137,12 @@ export const AuthService = {
         return data.access_token;
       }
 
-      if (data.error === 'authorization_pending') {
-        await new Promise(resolve => setTimeout(resolve, interval));
+      if (data.error === "authorization_pending") {
+        await new Promise((resolve) => setTimeout(resolve, interval));
         continue;
       }
 
-      throw new Error(data.error_description || 'Token polling failed');
+      throw new Error(data.error_description || "Token polling failed");
     }
   },
 

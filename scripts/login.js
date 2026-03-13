@@ -12,7 +12,7 @@ async function getDeviceCode() {
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({
             client_id: GITHUB_CLIENT_ID,
-            scope: "read:user"
+            scope: "read:user repo"
         })
     });
     const data = await resp.json();
