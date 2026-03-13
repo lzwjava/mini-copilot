@@ -12,7 +12,9 @@ An interactive terminal REPL for chatting with GitHub Copilot, built with Python
 ## Installation
 
 ```bash
-pip install mini-copilot
+git clone https://github.com/lzwjava/mini-copilot
+cd mini-copilot
+pip install -e .
 ```
 
 ## Usage
@@ -50,10 +52,3 @@ mini_copilot/
 pyproject.toml    # Package metadata and entry points
 ```
 
-## Development
-
-```bash
-git clone https://github.com/lzwjava/mini-copilot
-cd mini-copilot
-pip install -e .
-```
