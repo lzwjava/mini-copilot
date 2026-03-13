@@ -9,25 +9,24 @@ An interactive terminal REPL for chatting with GitHub Copilot, built with Python
 - Automatic Copilot token refresh during session
 - GPT-4o model
 
-## Setup
+## Installation
 
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. Authenticate with GitHub:
-   ```bash
-   python scripts/login.py
-   ```
-   This runs the GitHub device authorization flow and saves your token to `public/config.json`.
-
-3. Start the REPL:
-   ```bash
-   python src/mini_copilot.py
-   ```
+```bash
+pip install mini-copilot
+```
 
 ## Usage
+
+1. Authenticate with GitHub (once):
+   ```bash
+   mini-copilot-login
+   ```
+   This runs the GitHub device authorization flow and saves your token to `~/.config/mini-copilot/config.json`.
+
+2. Start the REPL:
+   ```bash
+   mini-copilot
+   ```
 
 ```
 > What is a closure in Python?
@@ -44,14 +43,17 @@ Type `.exit` or press `Ctrl+C` to quit.
 ## Project Structure
 
 ```
-scripts/
-└── login.py            # CLI login utility
+mini_copilot/
+├── main.py       # Interactive REPL
+└── login.py      # CLI login utility
 
-src/
-└── mini_copilot.py     # Interactive REPL
+pyproject.toml    # Package metadata and entry points
+```
 
-public/
-└── config.json         # Generated token store (gitignored)
+## Development
 
-requirements.txt        # Python dependencies
+```bash
+git clone https://github.com/lzwjava/mini-copilot
+cd mini-copilot
+pip install -e .
 ```
