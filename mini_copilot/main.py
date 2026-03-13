@@ -88,9 +88,10 @@ def main():
     messages = []
     current_model = "gpt-4o"
 
-    print(
-        "GitHub Copilot CLI ready. Type your message, /login to authenticate, or .exit to quit.\n"
-    )
+    print("GitHub Copilot CLI ready. Available commands:")
+    for cmd, desc in COMMANDS_HELP:
+        print(f"  {cmd:<10} {desc}")
+    print()
 
     while True:
         try:
@@ -190,7 +191,7 @@ def main():
             messages.append({"role": "assistant", "content": reply})
             last_reply = reply
 
-            print(f"\nGitHub Copilot: {reply}\n")
+            print(f"\n{reply}\n")
         except Exception as e:
             print(f"Error: {e}", file=sys.stderr)
 
