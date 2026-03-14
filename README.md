@@ -2,7 +2,7 @@
 
 [中文](./README_CN.md)
 
-An interactive terminal REPL for chatting with GitHub Copilot, built with Python.
+A minimal [openclaw](https://github.com/lzwjava/openclaw) implementation for enterprise-constrained environments. iclaw is a lightweight terminal REPL that provides AI-assisted coding via GitHub Copilot, designed to work where full-featured tools are blocked or restricted — no browser extensions, no IDE plugins, just a plain Python CLI.
 
 ## Features
 
