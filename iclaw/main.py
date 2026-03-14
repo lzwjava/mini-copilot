@@ -21,7 +21,7 @@ except ImportError:
 from iclaw.github_api import chat, get_copilot_token
 from iclaw.web_search import web_search
 from iclaw.exec_tool import exec_command as exec
-from tools.edit_tool import EditTool
+from iclaw.tools.edit_tool import EditTool
 from iclaw.commands.auth import handle_login_command
 from iclaw.commands.model import handle_model_command
 from iclaw.commands.search_provider import handle_search_provider_command
