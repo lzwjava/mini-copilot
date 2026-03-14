@@ -202,9 +202,48 @@ def format_llm_output(results):
     return "\n\n".join(blocks)
 
 
+def search_tavily(query, num_results=5):
+    """Using Tavily API for search"""
+    import os
+
+    from tavily import TavilyClient
+
+    api_key = os.getenv("TAVILY_API_KEY")
+    if not api_key:
+        print("[web search] Error: TAVILY_API_KEY not set.")
+        return []
+
+    try:
+        client = TavilyClient(api_key=api_key)
+        # Tavily's search already includes content/context if requested
+        response = client.search(
+            query, search_depth="advanced", max_results=num_results
+        )
+
+        results = []
+        for res in response.get("results", []):
+            results.append(
+                {
+                    "title": res.get("title", "No Title"),
+                    "url": res.get("url"),
+                    "content": res.get("content", "No content available."),
+                }
+            )
+        return results
+    except Exception as e:
+        print(f"[web search] Error searching Tavily: {e}")
+        return []
+
+
 def web_search(query, num_results=5, provider="duckduckgo"):
     """Function to be called as a tool."""
     print(f"[web search] Searching ({provider}): {query}")
+
+    if provider == "tavily":
+        search_results = search_tavily(query, num_results=num_results)
+        if not search_results:
+            return "No results found."
+        return format_llm_output(search_results)
 
     if provider == "startpage":
         search_results = search_startpage(query, num_results=num_results)
