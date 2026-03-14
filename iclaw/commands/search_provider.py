@@ -1,4 +1,6 @@
-SEARCH_PROVIDERS = ["duckduckgo", "startpage", "bing"]
+import os
+
+SEARCH_PROVIDERS = ["duckduckgo", "startpage", "bing", "tavily"]
 
 
 def handle_search_provider_command(search_provider):
@@ -16,8 +18,23 @@ def handle_search_provider_command(search_provider):
             if choice.isdigit():
                 n = int(choice)
                 if 1 <= n <= len(SEARCH_PROVIDERS):
-                    print(f"Search provider set to: {SEARCH_PROVIDERS[n - 1]}\n")
-                    return SEARCH_PROVIDERS[n - 1]
+                    provider = SEARCH_PROVIDERS[n - 1]
+                    if provider == "tavily" and not os.getenv("TAVILY_API_KEY"):
+                        print(
+                            "TAVILY_API_KEY environment variable not found. Please set it to use Tavily.\n"
+                        )
+                        api_key = input("Enter your Tavily API key: ").strip()
+                        if api_key:
+                            os.environ["TAVILY_API_KEY"] = api_key
+                            print("TAVILY_API_KEY set for this session.\n")
+                        else:
+                            print(
+                                "Tavily API key not provided. Keeping current selection.\n"
+                            )
+                            return search_provider
+
+                    print(f"Search provider set to: {provider}\n")
+                    return provider
                 else:
                     print("Invalid selection.\n")
             else:
