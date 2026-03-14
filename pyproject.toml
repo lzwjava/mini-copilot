@@ -12,4 +12,3 @@ dependencies = ["requests>=2.32.0", "pyperclip>=1.8.0", "beautifulsoup4>=4.12.0"
 
 [project.scripts]
 mini-copilot = "mini_copilot.main:main"
-mini-copilot-login = "mini_copilot.login:main"
