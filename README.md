@@ -7,8 +7,8 @@ An interactive terminal REPL for chatting with GitHub Copilot, built with Python
 ## Features
 
 - **Multi-turn conversations** with GitHub Copilot in your terminal.
-- **Native Tool Calling**: Automatically triggers web searches when real-time information is needed.
-- **Customizable**: Select search providers and models during the session.
+- **Native Tool Calling**: The model can autonomously invoke web search, execute shell commands, and edit files.
+- **Multiple Search Providers**: DuckDuckGo (default), Startpage, Bing, and Tavily.
 - **GitHub OAuth device flow** authentication.
 - **Automatic token refresh** during sessions.
 - **Modern Default**: Uses GPT-5.2 as the default model.
@@ -23,28 +23,43 @@ pip install -e .
 
 ## Usage
 
-1. **Authenticate with GitHub** (once):
-   Start `iclaw`, then run:
-   ```
-   /login
-   ```
-   This runs the GitHub device authorization flow and saves your token to `~/.config/iclaw/config.json`.
-
-2. **Start the REPL**:
+1. **Start the REPL**:
    ```bash
    iclaw
    ```
 
+2. **Authenticate with GitHub** (on first run):
+   ```
+   /model_provider
+   ```
+   Select `copilot`, then follow the GitHub device authorization flow. Your token is saved to `~/.config/iclaw/config.json`.
+
 ### CLI Commands
-- `/login`: Authenticate with GitHub.
+- `/model_provider`: Select and authenticate with the model provider.
 - `/model`: View and switch between available models.
 - `/search_provider`: View and switch web search providers (default: DuckDuckGo).
 - `/copy`: Copy the last response to your clipboard.
 - `/help`: Show available commands.
 - `.exit`: Quit the REPL.
 
-## Web Search (Native Tool Calling)
-The agent is equipped with a `web_search` tool. When you ask about recent events or real-time data, the model will autonomously invoke the tool, fetch content, and provide an answer based on live results.
+## Native Tool Calling
+
+The model has access to three tools it can invoke autonomously:
+
+- **web_search**: Search the web for current information using your selected provider.
+- **exec**: Execute shell commands with a 30-second timeout.
+- **edit**: Apply unified diff patches to create or modify files.
+
+## Search Providers
+
+Switch providers during a session with `/search_provider`:
+
+| Provider | API Key Required | Notes |
+|----------|-----------------|-------|
+| DuckDuckGo | No | Default provider |
+| Startpage | No | Privacy-focused |
+| Bing | No | Microsoft Bing |
+| Tavily | Yes (`TAVILY_API_KEY`) | AI-native search API |
 
 ---
 
@@ -61,9 +76,11 @@ python3 -m coverage report -m
 ```
 iclaw/
 ├── commands/     # Modular CLI command handlers
+├── tools/        # Tool implementations (edit)
 ├── main.py       # Core REPL loop and tool definitions
 ├── github_api.py # GitHub/Copilot API communication
-├── web_search.py # DuckDuckGo search and extraction logic
+├── web_search.py # Search providers and content extraction
+├── exec_tool.py  # Shell command execution tool
 └── login.py      # OAuth device flow logic
 
 tests/            # Unit tests
