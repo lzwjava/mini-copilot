@@ -1,54 +1,31 @@
-# mini-copilot
+# Mini Copilot
 
-An interactive terminal REPL for chatting with GitHub Copilot, built with Python.
+A small utility using Playwright to handle GitHub device authorization.
 
-## Features
+## Overview
 
-- Multi-turn conversations with GitHub Copilot in your terminal
-- GitHub OAuth device flow authentication
-- Automatic Copilot token refresh during session
-- GPT-4o model
+This project automates the [GitHub Device Login](https://github.com/login/device) flow. It uses Playwright to:
+1. Navigate to the device login page.
+2. Enter a provided user code.
+3. Handle the authorization button clicks.
+4. Capture screenshots for debugging.
 
-## Installation
+## Setup
 
 ```bash
-git clone https://github.com/lzwjava/mini-copilot
-cd mini-copilot
-pip install -e .
+npm install
 ```
 
 ## Usage
 
-1. Authenticate with GitHub (once):
-   ```bash
-   mini-copilot-login
-   ```
-   This runs the GitHub device authorization flow and saves your token to `~/.config/mini-copilot/config.json`.
+Check `github_auth.js` for the automation logic. It uses a persistent browser context to maintain session state.
 
-2. Start the REPL:
-   ```bash
-   mini-copilot
-   ```
-
-```
-> What is a closure in Python?
-
-GitHub Copilot: A closure is ...
-
-> Can you give me an example?
-
-GitHub Copilot: Sure! Here's an example ...
+```bash
+node github_auth.js
 ```
 
-Type `.exit` or press `Ctrl+C` to quit.
+## Features
 
-## Project Structure
-
-```
-mini_copilot/
-├── main.py       # Interactive REPL
-└── login.py      # CLI login utility
-
-pyproject.toml    # Package metadata and entry points
-```
-
+- **Automated Login**: Handles the device code entry and authorization.
+- **Persistent Context**: Uses the OpenClaw browser profile.
+- **Debugging**: Generates screenshots (`github-debug-*.png`) for each step.
