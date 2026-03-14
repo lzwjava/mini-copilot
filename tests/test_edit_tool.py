@@ -57,6 +57,61 @@ class TestEditTool(unittest.TestCase):
         self.assertEqual(lines[0], "First Line")
         self.assertEqual(lines[-1], "Last Line")
 
+    def test_new_file(self):
+        new_file = "test_new_file.txt"
+        try:
+            edit = """--- /dev/null
++++ test_new_file.txt
+@@ -1,0 +1,2 @@
++New line 1
++New line 2
+"""
+            new_content = EditTool.edit(new_file, edit)
+            self.assertIn("New line 1", new_content)
+            self.assertIn("New line 2", new_content)
+        finally:
+            if os.path.exists(new_file):
+                os.remove(new_file)
+
+    def test_context_lines(self):
+        edit = """--- test_file.txt
++++ test_file.txt
+@@ -1,3 +1,3 @@
+ Line 1
+-Line 2
++Line TWO
+ Line 3
+"""
+        new_content = EditTool.edit(self.test_file, edit)
+        lines = new_content.splitlines()
+        self.assertEqual(lines[0], "Line 1")
+        self.assertEqual(lines[1], "Line TWO")
+        self.assertEqual(lines[2], "Line 3")
+
+    def test_delete_lines(self):
+        edit = """--- test_file.txt
++++ test_file.txt
+@@ -2,2 +2,0 @@
+-Line 2
+-Line 3
+"""
+        new_content = EditTool.edit(self.test_file, edit)
+        lines = new_content.splitlines()
+        self.assertEqual(len(lines), 3)
+        self.assertEqual(lines[0], "Line 1")
+        self.assertEqual(lines[1], "Line 4")
+
+    def test_add_lines(self):
+        edit = """--- test_file.txt
++++ test_file.txt
+@@ -2,0 +2,2 @@
++Inserted A
++Inserted B
+"""
+        new_content = EditTool.edit(self.test_file, edit)
+        self.assertIn("Inserted A", new_content)
+        self.assertIn("Inserted B", new_content)
+
 
 if __name__ == "__main__":
     unittest.main()
